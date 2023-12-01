@@ -9,7 +9,7 @@ mod tests {
         
         // Testing github workflow directory contents
         use std::fs;
-        let paths = fs::read_dir("./").unwrap();
+        let paths = fs::read_dir("./inputs").unwrap();
         let mut all_files = String::from("");
         for path in paths {
             all_files = all_files + " " + &format!("{}" ,path.unwrap().path().display());
