@@ -1,9 +1,13 @@
 [package]
-name = "Kuskus-AoC"
+name = "Kuskus-AoC-2023"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "setup_utils"
+path = "src/setup_utils.rs"
 
 [[bin]]
 name = "01"

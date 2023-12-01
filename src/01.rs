@@ -1,12 +1,5 @@
-use std::fs::read_to_string;
+use setup_utils::read_lines;
 
-fn read_lines(filename: &str) -> Vec<String> {
-    read_to_string(filename) 
-        .unwrap()  // panic on possible file-reading errors
-        .lines()  // split the string into an iterator of string slices
-        .map(String::from)  // make each slice into a string
-        .collect()  // gather them together into a vector
-}
 fn main() {
     let mut linesfull = read_lines("inputs\\01-full.txt");
     let mut lines1 = read_lines("inputs\\01-1-example.txt");
@@ -24,11 +17,12 @@ fn main() {
 
     println!("01-full.txt");
     println!("{}", first(&linesfull));
-    println!("{}", second(&linesfull));
+    println!("{}\n", second(&linesfull));
     
     println!("01-1-example.txt");
     println!("{}", first(&lines1));
-    println!("{}", second(&lines1));
+    println!("{}\n", second(&lines1));
+    
     
     println!("01-2-example.txt");
     println!("{}", first(&lines2));
@@ -108,7 +102,7 @@ fn second(lines: &Vec::<String>) -> i32 {
                 }
             }
         }
-        //println!("{}: {} {}", line, first, last);
+        println!("{}: {} {}", line, first, last);
         let sum = first + &last;
         sums.push(sum);
     }
