@@ -1,36 +1,69 @@
 use setup_utils::read_lines;
 
-fn main() {
-    let mut linesfull = read_lines("inputs\\01-full.txt");
-    let mut lines1 = read_lines("inputs\\01-1-example.txt");
-    let mut lines2 = read_lines("inputs\\01-2-example.txt");
-    for i in 0..linesfull.len() {
-        linesfull[i] = linesfull[i].trim().to_owned();
-    }
-    for i in 0..lines1.len() {
-        lines1[i] = lines1[i].trim().to_owned();
-    }
-    
-    for i in 0..lines2.len() {
-        lines2[i] = lines2[i].trim().to_owned();
+#[cfg(test)]
+mod tests {
+    use setup_utils::read_lines;
+
+    #[test]
+    fn part1() -> Result<(), String> {
+        let lines = read_lines("inputs\\01-1-example.txt");
+        let result = crate::part1(&lines);
+        if result == 142 {
+            Ok(())
+        } else {
+            Err(format!("0.1: Bad result for Part 1 example, expected 142 got {}", result))
+        }
     }
 
+    #[test]
+    fn part2() -> Result<(), String> {
+        let lines = read_lines("inputs\\01-2-example.txt");
+        let result = crate::part2(&lines);
+        if result == 281 {
+            Ok(())
+        } else {
+            Err(format!("0.1: Bad result for Part 2 example, expected 281 got {}", result))
+        }
+    }
+
+    #[test]
+    fn full() -> Result<(), String> {
+        let lines = read_lines("inputs\\01-full.txt");
+        let result1 = crate::part1(&lines);
+        let result2: i32 = crate::part2(&lines);
+        if result1 == 54159 && result2 == 53866 {
+            Ok(())
+        } else {
+            if result1 != 54159 {
+                Err(format!("0.1: Bad result for Part 1, expected 54159 got {}", result1))
+            } else {
+                Err(format!("0.1: Bad result for Part 2, expected 53866 got {}", result2))
+            }
+        }
+    }
+}
+
+fn main() {
+    let linesfull = read_lines("inputs\\01-full.txt");
+    let lines1 = read_lines("inputs\\01-1-example.txt");
+    let lines2 = read_lines("inputs\\01-2-example.txt");
+
     println!("01-full.txt");
-    println!("{}", first(&linesfull));
-    println!("{}\n", second(&linesfull));
+    println!("{}", part1(&linesfull));
+    println!("{}\n", part2(&linesfull));
     
     println!("01-1-example.txt");
-    println!("{}", first(&lines1));
-    println!("{}\n", second(&lines1));
+    println!("{}", part1(&lines1));
+    println!("{}\n", part2(&lines1));
     
     
     println!("01-2-example.txt");
-    println!("{}", first(&lines2));
-    println!("{}", second(&lines2));
+    println!("{}", part1(&lines2));
+    println!("{}", part2(&lines2));
     
 }
 
-fn first(lines: &Vec::<String>) -> i32 {
+fn part1(lines: &Vec::<String>) -> i32 {
     let mut sums = Vec::new();
     for line in lines {
         let mut first = String::new();
@@ -59,7 +92,7 @@ fn first(lines: &Vec::<String>) -> i32 {
 }
 
 // one, two, three, four, five, six, seven, eight, nine
-fn second(lines: &Vec::<String>) -> i32 {
+fn part2(lines: &Vec::<String>) -> i32 {
     let mut sums = Vec::new();
     for line in lines {
         let mut first = String::new();
@@ -95,14 +128,14 @@ fn second(lines: &Vec::<String>) -> i32 {
                 }.to_owned();
                 if first == "" && found_num != "-1" {
                     //println!("{}: {}", potential_num, found_num);
-                    first = found_num.to_owned();
+                    first = found_num.clone();
                 }
                 if found_num != "-1" {
                     last = found_num;
                 }
             }
         }
-        println!("{}: {} {}", line, first, last);
+        //println!("{}: {} {}", line, first, last);
         let sum = first + &last;
         sums.push(sum);
     }
