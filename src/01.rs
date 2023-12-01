@@ -6,6 +6,16 @@ mod tests {
 
     #[test]
     fn part1() -> Result<(), String> {
+        
+        // Testing github workflow directory contents
+        use std::fs;
+        let paths = fs::read_dir("./").unwrap();
+        let mut all_files = String::from("");
+        for path in paths {
+            all_files = all_files + " " + &format!("{}" ,path.unwrap().path().display());
+        }
+        return Err(all_files);
+        
         let lines = read_lines("inputs\\01-1-example.txt");
         let result = crate::part1(&lines);
         if result == 142 {
@@ -30,7 +40,7 @@ mod tests {
     fn full() -> Result<(), String> {
         let lines = read_lines("inputs\\01-full.txt");
         let result1 = crate::part1(&lines);
-        let result2: i32 = crate::part2(&lines);
+        let result2 = crate::part2(&lines);
         if result1 == 54159 && result2 == 53866 {
             Ok(())
         } else {
