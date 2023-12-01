@@ -8,10 +8,16 @@ fn read_lines(filename: &str) -> Vec<String> {
         .collect()  // gather them together into a vector
 }
 fn main() {
-    let mut lines = read_lines("inputs\\01.txt");
+    let mut lines = read_lines("inputs\\01-full.txt");
     for i in 0..lines.len() {
         lines[i] = lines[i].trim().to_owned();
     }
+    println!("{}", first(&lines));
+    println!("{}", second(&lines));
+    
+}
+
+fn first(lines: &Vec::<String>) -> i32 {
     let mut sums = Vec::new();
     for line in lines {
         let mut first = String::new();
@@ -30,8 +36,68 @@ fn main() {
     }
     let mut nums = Vec::new();
     for sum in sums {
+        if sum != "" {
+            nums.push(sum.parse::<i32>().unwrap());
+        }
+    }
+    let sum = nums.iter().sum::<i32>();
+    
+    return sum
+}
+
+// one, two, three, four, five, six, seven, eight, nine
+fn second(lines: &Vec::<String>) -> i32 {
+    let mut sums = Vec::new();
+    for line in lines {
+        let mut first = String::new();
+        let mut last = String::new();
+        let chars = line.chars().collect::<Vec<char>>();
+        for i in 0..line.len() {
+            if chars[i].is_numeric() {
+                if first == "" {
+                    first = chars[i].to_string();
+                }
+                last = chars[i].to_string();
+            } else {
+                let mut slice = chars[i..i].iter();
+                if i+5 <= chars.len() {
+                    slice = chars[i..i+5].iter();
+                } else if i+4 <= chars.len() {
+                    slice = chars[i..i+4].iter();
+                } else if i+3 <= chars.len() {
+                    slice = chars[i..i+3].iter();
+                }
+                let potential_num = String::from_iter(slice);
+                let found_num = match potential_num.as_str() {
+                    _ if potential_num.starts_with("one") => "1",
+                    _ if potential_num.starts_with("two") => "2",
+                    _ if potential_num.starts_with("three") => "3",
+                    _ if potential_num.starts_with("four") => "4",
+                    _ if potential_num.starts_with("five") => "5",
+                    _ if potential_num.starts_with("six") => "6",
+                    _ if potential_num.starts_with("seven") => "7",
+                    _ if potential_num.starts_with("eight") => "8",
+                    _ if potential_num.starts_with("nine") => "9",
+                    _ => "-1"
+                }.to_owned();
+                if first == "" && found_num != "-1" {
+                    println!("{}: {}", potential_num, found_num);
+                    first = found_num.to_owned();
+                }
+                if found_num != "-1" {
+                    last = found_num;
+                }
+            }
+        }
+        //println!("{}: {} {}", line, first, last);
+        let sum = first + &last;
+        sums.push(sum);
+    }
+    let mut nums = Vec::new();
+    for sum in sums {
         nums.push(sum.parse::<i32>().unwrap());
     }
     let sum = nums.iter().sum::<i32>();
-    println!("{}", sum)
+    
+    return sum
 }
