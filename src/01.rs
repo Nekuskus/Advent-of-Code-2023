@@ -1,22 +1,14 @@
 use setup_utils::read_lines;
+use std::path::Path;
 
 #[cfg(test)]
 mod tests {
     use setup_utils::read_lines;
+    use std::path::Path;
 
     #[test]
     fn part1() -> Result<(), String> {
-        
-        // Testing github workflow directory contents
-        use std::fs;
-        let paths = fs::read_dir("./inputs").unwrap();
-        let mut all_files = String::from("");
-        for path in paths {
-            all_files = all_files + " " + &format!("{}" ,path.unwrap().path().display());
-        }
-        return Err(all_files);
-        
-        let lines = read_lines("inputs\\01-1-example.txt");
+        let lines = read_lines(Path::new("./inputs/01-1-example.txt"));
         let result = crate::part1(&lines);
         if result == 142 {
             Ok(())
@@ -27,7 +19,7 @@ mod tests {
 
     #[test]
     fn part2() -> Result<(), String> {
-        let lines = read_lines("inputs\\01-2-example.txt");
+        let lines = read_lines(Path::new("./inputs/01-2-example.txt"));
         let result = crate::part2(&lines);
         if result == 281 {
             Ok(())
@@ -38,7 +30,7 @@ mod tests {
 
     #[test]
     fn full() -> Result<(), String> {
-        let lines = read_lines("inputs\\01-full.txt");
+        let lines = read_lines(Path::new("./inputs/01-full.txt"));
         let result1 = crate::part1(&lines);
         let result2 = crate::part2(&lines);
         if result1 == 54159 && result2 == 53866 {
@@ -54,9 +46,9 @@ mod tests {
 }
 
 fn main() {
-    let linesfull = read_lines("inputs\\01-full.txt");
-    let lines1 = read_lines("inputs\\01-1-example.txt");
-    let lines2 = read_lines("inputs\\01-2-example.txt");
+    let linesfull = read_lines(Path::new("./inputs/01-full.txt"));
+    let lines1 = read_lines(Path::new("./inputs/01-1-example.txt"));
+    let lines2 = read_lines(Path::new("./inputs/01-2-example.txt"));
 
     println!("01-full.txt");
     println!("{}", part1(&linesfull));
