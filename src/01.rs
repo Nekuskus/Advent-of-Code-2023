@@ -8,12 +8,31 @@ fn read_lines(filename: &str) -> Vec<String> {
         .collect()  // gather them together into a vector
 }
 fn main() {
-    let mut lines = read_lines("inputs\\01-full.txt");
-    for i in 0..lines.len() {
-        lines[i] = lines[i].trim().to_owned();
+    let mut linesfull = read_lines("inputs\\01-full.txt");
+    let mut lines1 = read_lines("inputs\\01-1-example.txt");
+    let mut lines2 = read_lines("inputs\\01-2-example.txt");
+    for i in 0..linesfull.len() {
+        linesfull[i] = linesfull[i].trim().to_owned();
     }
-    println!("{}", first(&lines));
-    println!("{}", second(&lines));
+    for i in 0..lines1.len() {
+        lines1[i] = lines1[i].trim().to_owned();
+    }
+    
+    for i in 0..lines2.len() {
+        lines2[i] = lines2[i].trim().to_owned();
+    }
+
+    println!("01-full.txt");
+    println!("{}", first(&linesfull));
+    println!("{}", second(&linesfull));
+    
+    println!("01-1-example.txt");
+    println!("{}", first(&lines1));
+    println!("{}", second(&lines1));
+    
+    println!("01-2-example.txt");
+    println!("{}", first(&lines2));
+    println!("{}", second(&lines2));
     
 }
 
@@ -81,7 +100,7 @@ fn second(lines: &Vec::<String>) -> i32 {
                     _ => "-1"
                 }.to_owned();
                 if first == "" && found_num != "-1" {
-                    println!("{}: {}", potential_num, found_num);
+                    //println!("{}: {}", potential_num, found_num);
                     first = found_num.to_owned();
                 }
                 if found_num != "-1" {
