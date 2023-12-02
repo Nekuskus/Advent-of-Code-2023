@@ -10,34 +10,50 @@ mod tests {
 
     #[test]
     fn part1() -> Result<(), String> {
-        let lines = read_lines(Path::new("./inputs/02-1-example.txt"));
+        let lines = read_lines(Path::new("./inputs/02-example.txt"));
         let result = crate::part1(&lines);
         if result == 8 {
             Ok(())
         } else {
-            Err(format!("01: Bad result for Part 1 example, expected 8 got {}", result))
+            Err(format!("02: Bad result for Part 1 example, expected 8 got {}", result))
+        }
+    }
+    
+    #[test]
+    fn part2() -> Result<(), String> {
+        let lines = read_lines(Path::new("./inputs/02-example.txt"));
+        let result = crate::part2(&lines);
+        if result == 2286 {
+            Ok(())
+        } else {
+            Err(format!("02: Bad result for Part 2 example, expected 2286 got {}", result))
+        }
+    }
+
+    #[test]
+    fn full() -> Result<(), String> {
+        let lines = read_lines(Path::new("./inputs/02-full.txt"));
+        let result1 = crate::part1(&lines);
+        let _result2 = crate::part2(&lines);
+        if result1 == 2085 {
+            Ok(())
+        } else {
+            Err(format!("02: Bad result for Part 1, expected 2085 got {}", result1))
         }
     }
 }
 
 fn main() {
     let linesfull = read_lines(Path::new("./inputs/02-full.txt"));
-    let lines1 = read_lines(Path::new("./inputs/02-1-example.txt"));
-    //let lines2 = read_lines(Path::new("./inputs/02-2-example.txt"));
-
+    let lines1and2 = read_lines(Path::new("./inputs/02-example.txt"));
+    
     println!("01-full.txt");
     println!("{}", part1(&linesfull));
-    //println!("{}\n", part2(&linesfull));
+    println!("{}\n", part2(&linesfull));
     
     println!("01-1-example.txt");
-    println!("{}", part1(&lines1));
-    //println!("{}\n", part2(&lines1));
-    
-    
-    //println!("01-2-example.txt");
-    //println!("{}", part1(&lines2));
-    //println!("{}", part2(&lines2));
-    
+    println!("{}", part1(&lines1and2));
+    println!("{}\n", part2(&lines1and2));
 }
 
 fn part1(lines: &Vec::<String>) -> i32 {
@@ -66,4 +82,30 @@ fn part1(lines: &Vec::<String>) -> i32 {
         }
     }
     return sum_of_ids;
+}
+
+fn part2(lines: &Vec::<String>) -> i32 {
+    let mut sum_of_powers = 0;
+    for i in 0..lines.len() {
+        //let line_id = i as i32 + 1;
+        let mut line_record: HashMap<String, i32> = HashMap::new();
+        let line_of_balls = lines[i].split(' ').map(String::from).collect::<Vec<String>>()[2..].join(" ");
+        let replaced_line = line_of_balls.replace(";", &",");
+        let arr_of_balls = replaced_line.split(",").map(|s| s.trim().split(' ')).map(|spl| spl.collect::<Vec<&str>>()).collect::<Vec<Vec<&str>>>();
+        for arr in arr_of_balls {
+            //println!("{}, {}", arr[0], arr[1]);
+            let amount: i32 = arr[0].parse().unwrap();
+            let color = arr[1];
+            if !line_record.contains_key(color) {
+                line_record.insert(color.to_owned(), amount);
+            } else if line_record.get(color).unwrap() < &amount {
+                *line_record.get_mut(color).unwrap() = amount;
+            }
+        }
+        let (red, blue, green) = (line_record.get("red").unwrap_or(&99), line_record.get("green").unwrap_or(&99), line_record.get("blue").unwrap_or(&99));
+        //println!("id: {}, red: {}, green: {}, blue: {}, power: {}", line_id, red, blue, green, red * blue * green);
+
+        sum_of_powers += red * green * blue;
+    }
+    return sum_of_powers;
 }
