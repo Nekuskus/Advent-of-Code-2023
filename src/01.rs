@@ -13,7 +13,7 @@ mod tests {
         if result == 142 {
             Ok(())
         } else {
-            Err(format!("0.1: Bad result for Part 1 example, expected 142 got {}", result))
+            Err(format!("01: Bad result for Part 1 example, expected 142 got {}", result))
         }
     }
 
@@ -24,7 +24,7 @@ mod tests {
         if result == 281 {
             Ok(())
         } else {
-            Err(format!("0.1: Bad result for Part 2 example, expected 281 got {}", result))
+            Err(format!("01: Bad result for Part 2 example, expected 281 got {}", result))
         }
     }
 
@@ -37,9 +37,9 @@ mod tests {
             Ok(())
         } else {
             if result1 != 54159 {
-                Err(format!("0.1: Bad result for Part 1, expected 54159 got {}", result1))
+                Err(format!("01: Bad result for Part 1, expected 54159 got {}", result1))
             } else {
-                Err(format!("0.1: Bad result for Part 2, expected 53866 got {}", result2))
+                Err(format!("01: Bad result for Part 2, expected 53866 got {}", result2))
             }
         }
     }
