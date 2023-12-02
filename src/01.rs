@@ -33,14 +33,11 @@ mod tests {
         let lines = read_lines(Path::new("./inputs/01-full.txt"));
         let result1 = crate::part1(&lines);
         let result2 = crate::part2(&lines);
-        if result1 == 54159 && result2 == 53866 {
-            Ok(())
-        } else {
-            if result1 != 54159 {
-                Err(format!("01: Bad result for Part 1, expected 54159 got {}", result1))
-            } else {
-                Err(format!("01: Bad result for Part 2, expected 53866 got {}", result2))
-            }
+        match (result1, result2) {
+            (54159, 53866) => Ok(()),
+            (_, 53866) => Err(format!("02: Bad result for Part 1, expected 54159 got {}", result1)),
+            (54159, _) => Err(format!("02: Bad result for Part 2, expected 53866 got {}", result2)),
+            (_, _) => Err(format!("02: Bad result for Part 1 & 2, expected (54159, 53866) got ({}, {})", result1, result2))
         }
     }
 }
