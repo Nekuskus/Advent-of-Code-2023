@@ -41,9 +41,18 @@ mod tests {
         let result2 = crate::part2(&lines);
         match (result1, result2) {
             (525181, 84289137) => Ok(()),
-            (_, 84289137) => Err(format!("03: Bad result for Part 1, expected 525181 got {}", result1)),
-            (525181, _) => Err(format!("03: Bad result for Part 2, expected 84289137 got {}", result2)),
-            (_, _) => Err(format!("03: Bad result for Part 1 & 2, expected (525181, 84289137) got ({}, {})", result1, result2))
+            (_, 84289137) => Err(format!(
+                "03: Bad result for Part 1, expected 525181 got {}",
+                result1
+            )),
+            (525181, _) => Err(format!(
+                "03: Bad result for Part 2, expected 84289137 got {}",
+                result2
+            )),
+            (_, _) => Err(format!(
+                "03: Bad result for Part 1 & 2, expected (525181, 84289137) got ({}, {})",
+                result1, result2
+            )),
         }
     }
 }
@@ -59,6 +68,17 @@ fn main() {
     println!("03-example.txt");
     println!("{}", part1(&lines1));
     println!("{}\n", part2(&lines1));
+}
+
+fn pad_lines(lines: &Vec<String>) -> Vec<String> {
+    let mut new_vec = lines.clone();
+    for line in new_vec.iter_mut() {
+        line.insert_str(0, ".");
+        line.insert_str(len!(line), ".");
+    }
+    new_vec.insert(0, ".".repeat(new_vec[0].len()));
+    new_vec.insert(len!(new_vec), ".".repeat(new_vec[0].len()));
+    return new_vec;
 }
 
 fn part1(lines: &Vec<String>) -> i32 {
@@ -187,93 +207,82 @@ fn parse_num_from(line: &Vec<char>, x: usize) -> i32 {
 }
 
 fn part2(lines: &Vec<String>) -> i32 {
+    let padded = pad_lines(lines);
     let mut sum_of_nums = 0;
     let mut lastnum = -1;
 
-    for y in 0..len!(lines) {
-        for x in 0..len!(lines[y]) {
-            let line = lines[y].chars().collect::<Vec<char>>();
+    for y in 0..len!(padded) {
+        for x in 0..len!(padded[y]) {
+            let line = padded[y].chars().collect::<Vec<char>>();
             let c = line[x];
 
             let mut found_numbers = Vec::new();
 
             if c == '*' {
-                let rangey = 0..len!(lines) as i32;
-                let rangex = 0..len!(lines[y]) as i32;
+                let line_prev = padded[y - 1].chars().collect::<Vec<char>>();
 
-                if rangey.contains(&(y as i32 - 1)) {
-                    let line_prev = lines[y - 1].chars().collect::<Vec<char>>();
-                    if rangex.contains(&(x as i32 - 1)) {
-                        if line_prev[x - 1].is_digit(10) {
-                            let parsed = parse_num_from(&line_prev, x - 1);
-                            if parsed != lastnum {
-                                found_numbers.push(parsed);
-                            }
-                            lastnum = parsed;
-                        }
+                if line_prev[x - 1].is_digit(10) {
+                    let parsed = parse_num_from(&line_prev, x - 1);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
                     }
-                    if rangex.contains(&(x as i32 + 1)) {
-                        if line_prev[x + 1].is_digit(10) {
-                            let parsed = parse_num_from(&line_prev, x + 1);
-                            if parsed != lastnum {
-                                found_numbers.push(parsed);
-                            }
-                            lastnum = parsed;
-                        }
-                    }
-                    if line_prev[x].is_digit(10) {
-                        let parsed = parse_num_from(&line_prev, x);
-                        if parsed != lastnum {
-                            found_numbers.push(parsed);
-                        }
-                        lastnum = parsed;
-                    }
+                    lastnum = parsed;
                 }
-                if rangey.contains(&(y as i32 + 1)) {
-                    let line_next = lines[y + 1].chars().collect::<Vec<char>>();
-                    if rangex.contains(&(x as i32 - 1)) {
-                        if line_next[x - 1].is_digit(10) {
-                            let parsed = parse_num_from(&line_next, x - 1);
-                            if parsed != lastnum {
-                                found_numbers.push(parsed);
-                            }
-                            lastnum = parsed;
-                        }
+                if line_prev[x + 1].is_digit(10) {
+                    let parsed = parse_num_from(&line_prev, x + 1);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
                     }
-                    if rangex.contains(&(x as i32 + 1)) {
-                        if line_next[x + 1].is_digit(10) {
-                            let parsed = parse_num_from(&line_next, x + 1);
-                            if parsed != lastnum {
-                                found_numbers.push(parsed);
-                            }
-                            lastnum = parsed;
-                        }
-                    }
-                    if line_next[x].is_digit(10) {
-                        let parsed = parse_num_from(&line_next, x);
-                        if parsed != lastnum {
-                            found_numbers.push(parsed);
-                        }
-                        lastnum = parsed;
-                    }
+                    lastnum = parsed;
                 }
-                if rangex.contains(&(x as i32 - 1)) {
-                    if line[x - 1].is_digit(10) {
-                        let parsed = parse_num_from(&line, x - 1);
-                        if parsed != lastnum {
-                            found_numbers.push(parsed);
-                        }
-                        lastnum = parsed;
+
+                if line_prev[x].is_digit(10) {
+                    let parsed = parse_num_from(&line_prev, x);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
                     }
+                    lastnum = parsed;
                 }
-                if rangex.contains(&(x as i32 + 1)) {
-                    if line[x + 1].is_digit(10) {
-                        let parsed = parse_num_from(&line, x + 1);
-                        if parsed != lastnum {
-                            found_numbers.push(parsed);
-                        }
-                        lastnum = parsed;
+
+                let line_next = padded[y + 1].chars().collect::<Vec<char>>();
+
+                if line_next[x - 1].is_digit(10) {
+                    let parsed = parse_num_from(&line_next, x - 1);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
                     }
+                    lastnum = parsed;
+                }
+
+                if line_next[x + 1].is_digit(10) {
+                    let parsed = parse_num_from(&line_next, x + 1);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
+                    }
+                    lastnum = parsed;
+                }
+
+                if line_next[x].is_digit(10) {
+                    let parsed = parse_num_from(&line_next, x);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
+                    }
+                    lastnum = parsed;
+                }
+                if line[x - 1].is_digit(10) {
+                    let parsed = parse_num_from(&line, x - 1);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
+                    }
+                    lastnum = parsed;
+                }
+
+                if line[x + 1].is_digit(10) {
+                    let parsed = parse_num_from(&line, x + 1);
+                    if parsed != lastnum {
+                        found_numbers.push(parsed);
+                    }
+                    lastnum = parsed;
                 }
 
                 //println!("cursum: {}, oper1: {}, oper2: {}",sum_of_nums, oper1, oper2);
