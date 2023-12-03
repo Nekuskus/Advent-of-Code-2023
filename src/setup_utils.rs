@@ -1,6 +1,15 @@
 use std::fs::read_to_string;
 use std::path::Path;
 
+#[macro_export]
+macro_rules! len {
+    ( $x:ident ) => {
+        {
+            $x.len()
+        }
+    };
+}
+
 pub fn read_lines(filename: &Path) -> Vec<String> {
     read_to_string(filename) 
         .unwrap()  // panic on possible file-reading errors
