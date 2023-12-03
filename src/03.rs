@@ -190,13 +190,12 @@ fn part2(lines: &Vec<String>) -> i32 {
     let mut sum_of_nums = 0;
     let mut lastnum = -1;
 
-    let mut oper1 = -1;
-    let mut oper2 = -1;
-
     for y in 0..len!(lines) {
         for x in 0..len!(lines[y]) {
             let line = lines[y].chars().collect::<Vec<char>>();
             let c = line[x];
+
+            let mut found_numbers = Vec::new();
 
             if c == '*' {
                 let rangey = 0..len!(lines) as i32;
@@ -208,16 +207,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                         if line_prev[x - 1].is_digit(10) {
                             let parsed = parse_num_from(&line_prev, x - 1);
                             if parsed != lastnum {
-                                if oper1 == -1 {
-                                    oper1 = parsed
-                                } else if oper2 == -1 {
-                                    oper2 = parsed
-                                } else {
-                                    // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                    (oper1, oper2) = (-1, -1);
-                                    lastnum = -1;
-                                    continue;
-                                }
+                                found_numbers.push(parsed);
                             }
                             lastnum = parsed;
                         }
@@ -226,16 +216,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                         if line_prev[x + 1].is_digit(10) {
                             let parsed = parse_num_from(&line_prev, x + 1);
                             if parsed != lastnum {
-                                if oper1 == -1 {
-                                    oper1 = parsed
-                                } else if oper2 == -1 {
-                                    oper2 = parsed
-                                } else {
-                                    // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                    (oper1, oper2) = (-1, -1);
-                                    lastnum = -1;
-                                    continue;
-                                }
+                                found_numbers.push(parsed);
                             }
                             lastnum = parsed;
                         }
@@ -243,16 +224,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                     if line_prev[x].is_digit(10) {
                         let parsed = parse_num_from(&line_prev, x);
                         if parsed != lastnum {
-                            if oper1 == -1 {
-                                oper1 = parsed
-                            } else if oper2 == -1 {
-                                oper2 = parsed
-                            } else {
-                                // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                (oper1, oper2) = (-1, -1);
-                                lastnum = -1;
-                                continue;
-                            }
+                            found_numbers.push(parsed);
                         }
                         lastnum = parsed;
                     }
@@ -263,16 +235,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                         if line_next[x - 1].is_digit(10) {
                             let parsed = parse_num_from(&line_next, x - 1);
                             if parsed != lastnum {
-                                if oper1 == -1 {
-                                    oper1 = parsed
-                                } else if oper2 == -1 {
-                                    oper2 = parsed
-                                } else {
-                                    // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                    (oper1, oper2) = (-1, -1);
-                                    lastnum = -1;
-                                    continue;
-                                }
+                                found_numbers.push(parsed);
                             }
                             lastnum = parsed;
                         }
@@ -281,16 +244,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                         if line_next[x + 1].is_digit(10) {
                             let parsed = parse_num_from(&line_next, x + 1);
                             if parsed != lastnum {
-                                if oper1 == -1 {
-                                    oper1 = parsed
-                                } else if oper2 == -1 {
-                                    oper2 = parsed
-                                } else {
-                                    // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                    (oper1, oper2) = (-1, -1);
-                                    lastnum = -1;
-                                    continue;
-                                }
+                                found_numbers.push(parsed);
                             }
                             lastnum = parsed;
                         }
@@ -298,16 +252,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                     if line_next[x].is_digit(10) {
                         let parsed = parse_num_from(&line_next, x);
                         if parsed != lastnum {
-                            if oper1 == -1 {
-                                oper1 = parsed
-                            } else if oper2 == -1 {
-                                oper2 = parsed
-                            } else {
-                                // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                (oper1, oper2) = (-1, -1);
-                                lastnum = -1;
-                                continue;
-                            }
+                            found_numbers.push(parsed);
                         }
                         lastnum = parsed;
                     }
@@ -316,16 +261,7 @@ fn part2(lines: &Vec<String>) -> i32 {
                     if line[x - 1].is_digit(10) {
                         let parsed = parse_num_from(&line, x - 1);
                         if parsed != lastnum {
-                            if oper1 == -1 {
-                                oper1 = parsed
-                            } else if oper2 == -1 {
-                                oper2 = parsed
-                            } else {
-                                // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                (oper1, oper2) = (-1, -1);
-                                lastnum = -1;
-                                continue;
-                            }
+                            found_numbers.push(parsed);
                         }
                         lastnum = parsed;
                     }
@@ -334,27 +270,17 @@ fn part2(lines: &Vec<String>) -> i32 {
                     if line[x + 1].is_digit(10) {
                         let parsed = parse_num_from(&line, x + 1);
                         if parsed != lastnum {
-                            if oper1 == -1 {
-                                oper1 = parsed
-                            } else if oper2 == -1 {
-                                oper2 = parsed
-                            } else {
-                                // both are already assigned => gear has more than 2 operands! => bad, cancel operation
-                                (oper1, oper2) = (-1, -1);
-                                lastnum = -1;
-                                continue;
-                            }
+                            found_numbers.push(parsed);
                         }
                         lastnum = parsed;
                     }
                 }
 
                 //println!("cursum: {}, oper1: {}, oper2: {}",sum_of_nums, oper1, oper2);
-                if oper1 != -1 && oper2 != -1 {
+                if len!(found_numbers) == 2 {
                     //println!("in if -- cursum: {}, oper1: {}, oper2: {}",sum_of_nums, oper1, oper2);
-                    sum_of_nums += oper1 * oper2;
+                    sum_of_nums += found_numbers[0] * found_numbers[1];
                 }
-                (oper1, oper2) = (-1, -1);
             }
         }
     }
