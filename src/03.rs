@@ -1,4 +1,4 @@
-use setup_utils::{len, read_lines};
+use setup_utils::{len, read_lines, pad_lines};
 use std::path::Path;
 
 #[cfg(test)]
@@ -70,16 +70,6 @@ fn main() {
     println!("{}\n", part2(&lines1));
 }
 
-fn pad_lines(lines: &Vec<String>) -> Vec<String> {
-    let mut new_vec = lines.clone();
-    for line in new_vec.iter_mut() {
-        line.insert_str(0, ".");
-        line.insert_str(len!(line), ".");
-    }
-    new_vec.insert(0, ".".repeat(new_vec[0].len()));
-    new_vec.insert(len!(new_vec), ".".repeat(new_vec[0].len()));
-    return new_vec;
-}
 
 fn part1(lines: &Vec<String>) -> i32 {
     let mut sum_of_nums = 0;
