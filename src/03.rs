@@ -46,8 +46,6 @@ fn main() {
     let linesfull = read_lines(Path::new("./inputs/03-full.txt"));
     let lines1 = read_lines(Path::new("./inputs/03-1-example.txt"));
     //let lines2 = read_lines(Path::new("./inputs/03-2-example.txt"));
-    let a = vec![1, 2, 3, 4];
-    println!("{}", len!(a));
 
     println!("03-full.txt");
     println!("{}", part1(&linesfull));
@@ -65,12 +63,91 @@ fn main() {
 }
 
 fn part1(lines: &Vec::<String>) -> i32 {
-    let sum_of_nums = 0;
-    let cur_num = "";
-    let cur_is_valid = false;
-    for y in 0..lines.len() {
-        for x in 0..len!(lines) {
+    let mut sum_of_nums = 0;
 
+    let mut cur_parsing = false;
+    let mut cur_num = String::from("");
+    let mut cur_is_valid = false;
+    
+    for y in 0..len!(lines) {
+
+        for x in 0..len!(lines[y]) {
+        
+            if x == 0 { // handle line break while parsing number! as in, stop parsing and dump the result
+                if cur_parsing {
+                    let number = cur_num.parse::<i32>().expect(&format!("Something horrible happened and somehow instead of numbers value was {}", cur_num));
+                    if cur_is_valid {
+                        sum_of_nums += number;
+                    }
+                } 
+                cur_parsing = false;
+                cur_is_valid = false;
+                cur_num = String::from("");
+            }    
+        
+            let line = lines[y].chars().collect::<Vec<char>>();
+            let c = line[x];
+            if c.is_digit(10) {
+                cur_parsing = true;
+                cur_num += &c.to_string();
+
+                let rangey = 0..len!(lines) as i32;
+                let rangex = 0..len!(lines[y]) as i32;
+
+                if rangey.contains(&(y as i32 - 1)) {
+                    let line_prev = lines[y-1].chars().collect::<Vec<char>>();
+                    if rangex.contains(&(x as i32 - 1)) {
+                        if !line_prev[x-1].is_digit(10) && line_prev[x-1] != '.' {
+                            cur_is_valid = true;
+                        }
+                    }
+                    if rangex.contains(&(x as i32 + 1)) {
+                        if !line_prev[x+1].is_digit(10) && line_prev[x+1] != '.' {
+                            cur_is_valid = true;
+                        }
+                    }
+                    if !line_prev[x].is_digit(10) && line_prev[x] != '.' {
+                        cur_is_valid = true;
+                    }
+                }
+                if rangey.contains(&(y as i32 + 1)) {
+                    let line_next = lines[y+1].chars().collect::<Vec<char>>();
+                    if rangex.contains(&(x as i32 - 1)) {
+                        if !line_next[x-1].is_digit(10) && line_next[x-1] != '.' {
+                            cur_is_valid = true;
+                        }
+                    }
+                    if rangex.contains(&(x as i32 + 1)) {
+                        if !line_next[x+1].is_digit(10) && line_next[x+1] != '.' {
+                            cur_is_valid = true;
+                        }
+                    }
+                    if !line_next[x].is_digit(10) && line_next[x] != '.' {
+                        cur_is_valid = true;
+                    }
+                }
+                if rangex.contains(&(x as i32 - 1)) {
+                    if !line[x-1].is_digit(10) && line[x-1] != '.' {
+                        cur_is_valid = true;
+                    }
+                }
+                if rangex.contains(&(x as i32 + 1)) {
+                    if !line[x+1].is_digit(10) && line[x+1] != '.' {
+                        cur_is_valid = true;
+                    }
+                }
+            } else { // c == '.' or c is a symbol, doesn't matter because symbols are handled only as adjacent to the previous case
+                if cur_parsing {
+                    let number = cur_num.parse::<i32>().expect(&format!("Something horrible happened and somehow instead of numbers value was {}", cur_num));
+                    if cur_is_valid {
+                        sum_of_nums += number;
+                        println!("{}", number);
+                    }
+                } 
+                cur_parsing = false;
+                cur_is_valid = false;
+                cur_num = String::from("");
+            }
         }
     }
     return sum_of_nums;
