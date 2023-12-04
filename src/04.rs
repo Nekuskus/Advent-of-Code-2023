@@ -82,24 +82,20 @@ fn part1(lines: &Vec<String>) -> i32 {
         let winning = nums_line[0]
             .trim()
             .split_ascii_whitespace()
-            .map(|s| s.trim().parse::<i32>().expect("bad int error"))
+            .map(|s| s.trim().parse::<i32>().expect(&format!("bad int error num={}", s)))
             .collect::<HashSet<_>>();
-        //let deb = nums_line[1].trim().split(' ').map(|s| s.to_owned()).collect::<Vec<String>>();
-        //println!("{:?}", deb);
         let scratched = nums_line[1]
             .trim()
-            .replace("  ", " ")
-            .split(' ')
+            .split_ascii_whitespace()
             .map(|s| s.parse::<i32>().expect(&format!("bad int error num={}", s)))
             .collect::<HashSet<_>>();
         let found: HashSet<i32> = winning
             .intersection(&scratched)
-            .map(|n| n.to_owned())
+            .copied()
             .collect();
         if len!(found) > 0 {
             let score = 2_i32.pow(len!(found) as u32 - 1);
             sum_of_points += score;
-            //           println!("a {:?}\nb {:?}\nc {:?} score {}", winning, scratched, found, score);
         }
     }
     return sum_of_points;
@@ -120,10 +116,8 @@ fn part2(lines: &Vec<String>) -> i32 {
         let winning = nums_line[0]
             .trim()
             .split_ascii_whitespace()
-            .map(|s| s.trim().parse::<i32>().expect("bad int error"))
+            .map(|s| s.trim().parse::<i32>().expect(&format!("bad int error num={}", s)))
             .collect::<HashSet<_>>();
-        //let deb = nums_line[1].trim().split(' ').map(|s| s.to_owned()).collect::<Vec<String>>();
-        //println!("{:?}", deb);
         let scratched = nums_line[1]
             .trim()
             .replace("  ", " ")
@@ -132,7 +126,7 @@ fn part2(lines: &Vec<String>) -> i32 {
             .collect::<HashSet<_>>();
         let found: HashSet<i32> = winning
             .intersection(&scratched)
-            .map(|n| n.to_owned())
+            .copied()
             .collect();
         return (game_id - 1, len!(found));
     }).collect::<Vec<_>>();
@@ -147,3 +141,4 @@ fn part2(lines: &Vec<String>) -> i32 {
     }
     return total_count;
 }
+
