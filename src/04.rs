@@ -92,26 +92,33 @@ fn part1(lines: &Vec<String>) -> i32 {
        if len!(found) > 0 {
            let score = 2_i32.pow(len!(found) as u32 - 1);
            sum_of_points += score;
-           println!("a {:?}\nb {:?}\nc {:?} score {}", winning, scratched, found, score);
+//           println!("a {:?}\nb {:?}\nc {:?} score {}", winning, scratched, found, score);
        }
    }
    return sum_of_points;
 }
 
 fn part2(lines: &Vec<String>) -> i32 {
-    let mut sum_of_points = 0;
-   for line in lines {
-       let nums_line = line.split(":").collect::<Vec<_>>()[1].trim().split('|').map(|s| s.trim()).collect::<Vec<_>>();
-       let winning = nums_line[0].trim().replace("  ", " ").split(' ').map(|s| s.trim().parse::<i32>().expect("bad int error")).collect::<HashSet<_>>();
+    let mut total_count = 0;
+    let mut queue: Vec<String> = lines.clone();
+    
+    while len!(queue) > 0 {
+        let line = queue.pop().unwrap();
+       let replaced_line = line.replace("   ", "  ").replace("  ", " ");
+       let split_line = replaced_line.split(":").collect::<Vec<_>>();
+       let nums_line = split_line[1].trim().split('|').map(|s| s.trim()).collect::<Vec<_>>();
+       let game_id = split_line[0].split(" ").collect::<Vec<_>>()[1].parse::<usize>().unwrap();
+       let winning = nums_line[0].trim().split(' ').map(|s| s.trim().parse::<i32>().expect("bad int error")).collect::<HashSet<_>>();
 //       let deb = nums_line[1].trim().split(' ').map(|s| s.to_owned()).collect::<Vec<String>>();
 //       println!("{:?}", deb);
        let scratched = nums_line[1].trim().replace("  ", " ").split(' ').map(|s| s.parse::<i32>().expect(&format!("bad int error num={}", s))).collect::<HashSet<_>>();
        let found: HashSet<i32> = winning.intersection(&scratched).map(|n| n.to_owned()).collect();
        if len!(found) > 0 {
-           let score = 2_i32.pow(len!(found) as u32 - 1);
-           sum_of_points += score;
-           println!("a {:?}\nb {:?}\nc {:?} score {}", winning, scratched, found, score);
+           let score = len!(found) as usize;
+           queue.extend_from_slice(&lines[game_id..game_id+score]);
+//           println!("{} copies {:?}", game_id, (game_id+1..game_id+score+1).map(|n| (n as i32).to_string()).collect::<Vec<String>>().join(", "));
        }
+       total_count += 1;
    }
-   return sum_of_points;
+   return total_count;
 }
