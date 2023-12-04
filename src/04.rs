@@ -81,8 +81,7 @@ fn part1(lines: &Vec<String>) -> i32 {
             .collect::<Vec<_>>();
         let winning = nums_line[0]
             .trim()
-            .replace("  ", " ")
-            .split(' ')
+            .split_ascii_whitespace()
             .map(|s| s.trim().parse::<i32>().expect("bad int error"))
             .collect::<HashSet<_>>();
         //let deb = nums_line[1].trim().split(' ').map(|s| s.to_owned()).collect::<Vec<String>>();
@@ -109,19 +108,18 @@ fn part1(lines: &Vec<String>) -> i32 {
 fn part2(lines: &Vec<String>) -> i32 {
     let mut total_count = 0;
     let lines_parsed = lines.iter().map(|line| {
-        let replaced_line = line.replace("   ", "  ").replace("  ", " ");
-        let split_line = replaced_line.split(":").collect::<Vec<_>>();
+        let split_line = line.split(":").collect::<Vec<_>>();
         let nums_line = split_line[1]
             .trim()
             .split('|')
             .map(|s| s.trim())
             .collect::<Vec<_>>();
-        let game_id = split_line[0].split(" ").collect::<Vec<_>>()[1]
+        let game_id = split_line[0].split_ascii_whitespace().collect::<Vec<_>>()[1]
             .parse::<usize>()
             .unwrap();
         let winning = nums_line[0]
             .trim()
-            .split(' ')
+            .split_ascii_whitespace()
             .map(|s| s.trim().parse::<i32>().expect("bad int error"))
             .collect::<HashSet<_>>();
         //let deb = nums_line[1].trim().split(' ').map(|s| s.to_owned()).collect::<Vec<String>>();
@@ -129,7 +127,7 @@ fn part2(lines: &Vec<String>) -> i32 {
         let scratched = nums_line[1]
             .trim()
             .replace("  ", " ")
-            .split(' ')
+            .split_ascii_whitespace()
             .map(|s| s.parse::<i32>().expect(&format!("bad int error num={}", s)))
             .collect::<HashSet<_>>();
         let found: HashSet<i32> = winning
