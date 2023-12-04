@@ -1,5 +1,5 @@
 use setup_utils::{len, read_lines};
-use std::collections::{HashSet, VecDeque};
+use std::collections::HashSet;
 use std::path::Path;
 
 #[cfg(test)]
@@ -108,7 +108,7 @@ fn part1(lines: &Vec<String>) -> i32 {
 
 fn part2(lines: &Vec<String>) -> i32 {
     let mut total_count = 0;
-    let mut lines_parsed = lines.iter().map(|line| {
+    let lines_parsed = lines.iter().map(|line| {
         let replaced_line = line.replace("   ", "  ").replace("  ", " ");
         let split_line = replaced_line.split(":").collect::<Vec<_>>();
         let nums_line = split_line[1]
