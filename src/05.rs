@@ -1,5 +1,5 @@
 use setup_utils::*;
-use std::{path::Path, ops::{Range, RangeBounds}};
+use std::{path::Path, ops::{Range, Sub}};
 
 // Symbols to replace: 05 35 TEST2 SOLVE1 SOLVE2
 
@@ -10,7 +10,8 @@ struct RangeMap<T> {
     to: Range<T>
 }
 
-impl<T: Sized + Clone + PartialOrd> RangeMap<T> {
+impl<T: Sized + Copy + Clone + PartialOrd + std::fmt::Display + for<'a> std::ops::Add<<&'a T as std::ops::Sub<&'a T>>::Output, Output = T>> RangeMap<T>
+    where for<'a> &'a T : Sub<&'a T> {
     pub fn new(from_range: Range<T>, to_range: Range<T>) -> RangeMap<T> {
         return RangeMap::<T> { from: from_range, to: to_range };
     }
@@ -19,12 +20,19 @@ impl<T: Sized + Clone + PartialOrd> RangeMap<T> {
         return RangeMap::new(from_range.clone(), from_range);
     }
     
-    pub fn contains_from(&self, value: T) -> bool {
-        return self.from.contains(&value);
+    pub fn contains_from(&self, value: &T) -> bool {
+        return self.from.contains(value);
     }
 
-    pub fn contains_to(&self, value: T) -> bool {
-        return self.to.contains(&value);
+    pub fn contains_to(&self, value: &T) -> bool {
+        return self.to.contains(value);
+    }
+
+    pub fn map(&self, value: &T) -> T {
+        if !self.contains_from(value) {
+            panic!("Value {value} not in {}..{}!", self.from.start, self.from.end);
+        }
+        return self.to.start + (value - &self.from.start);
     }
 }
 
@@ -107,7 +115,8 @@ fn part1(lines: &Vec::<String>) -> u32 {
     //first split categories
     let lines_categories = lines[2..].to_vec();
 
-
+    let map = RangeMap::<i32>::new(1..4, 4..7);
+    println!("{}", map.map(&3));
     return lowest_location;
 }
 /*
