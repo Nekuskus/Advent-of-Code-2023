@@ -30,17 +30,17 @@ mod tests {
             Err(format!("FILENUM: Bad result for Part 2 example, expected TEST2 got {}", result))
         }
     }
-    /*
+
     #[test]
     fn full() -> Result<(), String> {
         let lines = read_lines(Path::new("./inputs/FILENUM-full.txt"));
         let result1 = crate::part1(&lines);
         let result2 = crate::part2(&lines);
         
-        if resul1 == TEST1 {
+        if result1 == TEST1 {
             Ok(())
         } else {
-            Err(format!("FILENUM: Bad result for Part 1, expected TEST1 got {}", result))
+            Err(format!("FILENUM: Bad result for Part 1, expected TEST1 got {}", result1))
         }
         /*
         match (result1, result2) {
@@ -49,7 +49,7 @@ mod tests {
             (SOLVE1, _) => Err(format!("FILENUM: Bad result for Part 2, expected SOLVE2 got {}", result2)),
             (_, _) => Err(format!("FILENUM: Bad result for Part 1 & 2, expected (SOLVE1, SOLVE2) got ({}, {})", result1, result2))
         }*/
-    }*/
+    }
     */
 }
 
