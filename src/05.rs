@@ -1,8 +1,32 @@
 use setup_utils::*;
-use std::path::Path;
+use std::{path::Path, ops::{Range, RangeBounds}};
 
 // Symbols to replace: 05 35 TEST2 SOLVE1 SOLVE2
 
+
+
+struct RangeMap<T> {
+    from: Range<T>,
+    to: Range<T>
+}
+
+impl<T: Sized + Clone + PartialOrd> RangeMap<T> {
+    pub fn new(from_range: Range<T>, to_range: Range<T>) -> RangeMap<T> {
+        return RangeMap::<T> { from: from_range, to: to_range };
+    }
+    
+    pub fn from_single(from_range: Range<T>) -> RangeMap<T> { // somewhat unnecessary
+        return RangeMap::new(from_range.clone(), from_range);
+    }
+    
+    pub fn contains_from(&self, value: T) -> bool {
+        return self.from.contains(&value);
+    }
+
+    pub fn contains_to(&self, value: T) -> bool {
+        return self.to.contains(&value);
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -62,7 +86,7 @@ fn main() {
     println!("05-full.txt");
     println!("{}", part1(&linesfull));
     //println!("{}\n", part2(&linesfull));
-    
+
     println!("05-1-example.txt");
     println!("{}", part1(&lines1));
     //println!("{}\n", part2(&lines1));
@@ -75,13 +99,19 @@ fn main() {
 }
 
 
-fn part1(lines: &Vec::<String>) -> i32 {
-    let lowest_location = -1;
-    //use .array_chunks::<3>()
+fn part1(lines: &Vec::<String>) -> u32 {
+    let lowest_location = u32::MAX;
+
+    let seeds = lines[0].split(':').map(|s| s.trim()).collect::<Vec<_>>()[1].split(' ').map(|s| s.parse::<u32>().expect(&format!("Number was incorrect, number: {s}"))).collect::<Vec<_>>();
+    println!("{seeds:?}");
+    //first split categories
+    let lines_categories = lines[2..].to_vec();
+
+
     return lowest_location;
 }
 /*
-fn part2(lines: &Vec::<String>) -> i32 {
+fn part2(lines: &Vec::<String>) -> u32 {
 
 }
 */
