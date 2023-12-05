@@ -56,7 +56,7 @@ mod tests {
 fn main() {
     let linesfull = read_lines(Path::new("./inputs/FILENUM-full.txt"));
     let lines1 = read_lines(Path::new("./inputs/FILENUM-1-example.txt"));
-    let lines2 = read_lines(Path::new("./inputs/FILENUM-2-example.txt"));
+    //let lines2 = read_lines(Path::new("./inputs/FILENUM-2-example.txt"));
 
     println!("FILENUM-full.txt");
     println!("{}", part1(&linesfull));

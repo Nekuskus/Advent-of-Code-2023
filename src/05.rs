@@ -57,7 +57,7 @@ mod tests {
 fn main() {
     let linesfull = read_lines(Path::new("./inputs/05-full.txt"));
     let lines1 = read_lines(Path::new("./inputs/05-1-example.txt"));
-    let lines2 = read_lines(Path::new("./inputs/05-2-example.txt"));
+    //let lines2 = read_lines(Path::new("./inputs/05-2-example.txt"));
 
     println!("05-full.txt");
     println!("{}", part1(&linesfull));
