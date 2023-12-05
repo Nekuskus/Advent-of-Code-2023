@@ -1,11 +1,11 @@
 use setup_utils::*;
-use std::{
-    ops::{Add, Range, Sub},
-    path::Path,
-};
+use std::ops::{Add, Range, Sub};
+use std::path::Path;
+use std::thread;
 
 // Symbols to replace: 05 35 46 278755257 26829166
 
+#[derive(Clone)]
 struct RangeMap<T> {
     from: Range<T>,
     to: Range<T>,
@@ -84,12 +84,21 @@ mod tests {
         let lines = read_lines(Path::new("./inputs/05-full.txt"));
         let result1 = crate::part1(&lines);
         let result2 = crate::part2(&lines);
-        
+
         match (result1, result2) {
             (278755257, 26829166) => Ok(()),
-            (_, 26829166) => Err(format!("05: Bad result for Part 1, expected 278755257 got {}", result1)),
-            (278755257, _) => Err(format!("05: Bad result for Part 2, expected 26829166 got {}", result2)),
-            (_, _) => Err(format!("05: Bad result for Part 1 & 2, expected (278755257, 26829166) got ({}, {})", result1, result2))
+            (_, 26829166) => Err(format!(
+                "05: Bad result for Part 1, expected 278755257 got {}",
+                result1
+            )),
+            (278755257, _) => Err(format!(
+                "05: Bad result for Part 2, expected 26829166 got {}",
+                result2
+            )),
+            (_, _) => Err(format!(
+                "05: Bad result for Part 1 & 2, expected (278755257, 26829166) got ({}, {})",
+                result1, result2
+            )),
         }
     }
 }
@@ -181,9 +190,9 @@ fn part2(lines: &Vec<String>) -> u64 {
                 .expect(&format!("Number was incorrect, number: {s}"))
         })
         .collect::<Vec<_>>();
-    let seed_ranges = seeds_unparsed.chunks(2).map(|chunk| {
-        chunk[0]..chunk[0] + chunk[1] + 1
-    });
+    let seed_ranges = seeds_unparsed
+        .chunks(2)
+        .map(|chunk| chunk[0]..chunk[0] + chunk[1] + 1);
     //println!("{seeds:?}");
     //first split categories
     let lines_categories = lines[2..].to_vec();
@@ -191,7 +200,7 @@ fn part2(lines: &Vec<String>) -> u64 {
         .split(|s| s == "")
         .map(|s| s.to_vec())
         .collect::<Vec<Vec<String>>>();
-    let mut mappings: Vec<Vec<RangeMap<u64>>> = Vec::new();
+    let mut mappings = Vec::new();
     //println!("{maps:#?}");
     for map in maps {
         let _header = &map[0];
@@ -203,41 +212,56 @@ fn part2(lines: &Vec<String>) -> u64 {
                 let source_range_start = split[1].parse::<u64>().unwrap();
                 let range_len = split[2].parse::<u64>().unwrap();
                 //println!("{split:?}: {}..{}, {}..{}", source_range_start, source_range_start+range_len, dest_range_start, dest_range_start+range_len);
-                RangeMap::new(
-                    source_range_start..source_range_start + range_len + 1,
-                    dest_range_start..dest_range_start + range_len + 1,
-                )
+                vec![dest_range_start, source_range_start, range_len]
             })
             .collect::<Vec<_>>();
         mappings.push(mapset);
     }
-    let result = seed_ranges
-        .map(|seed_range| { seed_range.map(|seed| {
-                let mut current_val = seed.clone();
-                //print!("{current_val}");
-                for mapset in &mappings {
-                    let mut found = false;
-                    let mut mapped: u64 = 0;
-                    for rangemap in mapset {
-                        if rangemap.contains_from(&current_val) {
-                            mapped = rangemap.map(&current_val);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if !found {
-                        mapped = current_val;
-                    }
-                    current_val = mapped;
-                    //print!(" -> {current_val}");
-                }
-                //println!("");
-                current_val
-            }).min().unwrap()
-        })
-        .collect::<Vec<_>>();
-
+    let mut lowest = u64::MAX;
+    let _ = thread::scope(|s| {
+        let join_vec = seed_ranges
+            .map(|seed_range| {
+                s.spawn(|| {
+                    return seed_range
+                        .map(|seed| {
+                            let mut current_val = seed.clone();
+                            //print!("{current_val}");
+                            for mapset in &mappings {
+                                let mut found = false;
+                                let mut mapped: u64 = 0;
+                                for rangearr in mapset {
+                                    let rangemap = RangeMap::new(
+                                        rangearr[1]..rangearr[1] + rangearr[2] + 1,
+                                        rangearr[0]..rangearr[0] + rangearr[2] + 1,
+                                    );
+                                    if rangemap.contains_from(&current_val) {
+                                        mapped = rangemap.map(&current_val);
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if !found {
+                                    mapped = current_val;
+                                }
+                                current_val = mapped;
+                                //print!(" -> {current_val}");
+                            }
+                            //println!("");
+                            current_val
+                        })
+                        .min()
+                        .unwrap();
+                })
+            })
+            .collect::<Vec<_>>();
+        for jh in join_vec {
+            let val = jh.join().unwrap();
+            if val < lowest {
+                lowest = val;
+            }
+        }
+    });
     //println!("{result:?}");
-
-    return result.iter().min().unwrap().clone();
+    return lowest;
+    //return result.iter().min().unwrap().clone();
 }
