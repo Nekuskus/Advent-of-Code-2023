@@ -76,7 +76,9 @@ fn main() {
 
 
 fn part1(lines: &Vec::<String>) -> i32 {
-
+    let lowest_location = -1;
+    //use .array_chunks::<3>()
+    return lowest_location;
 }
 /*
 fn part2(lines: &Vec::<String>) -> i32 {
