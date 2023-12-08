@@ -35,7 +35,7 @@ mod tests {
     fn full() -> Result<(), String> {
         let lines = read_lines(Path::new("./inputs/FILENUM-full.txt"));
         let result1 = crate::part1(&lines);
-        let result2 = crate::part2(&lines);
+        //let result2 = crate::part2(&lines);
         
         if result1 == SOLVE1 {
             Ok(())

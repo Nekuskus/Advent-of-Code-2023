@@ -37,5 +37,9 @@ path = "src/06.rs"
 name = "07"
 path = "src/07.rs"
 
+[[bin]]
+name = "08"
+path = "src/08.rs"
+
 [dependencies]
 lazy_static = "1.4.0"
