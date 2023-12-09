@@ -68,7 +68,7 @@ fn main() {
 
 
 fn evaluate_history(nums: Vec<i32>) -> i32 {
-    println!("{nums:?}");
+    //println!("{nums:?}");
     if nums.iter().all(|n| n == &0) {
         return 0;
     }
