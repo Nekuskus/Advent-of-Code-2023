@@ -105,8 +105,8 @@ fn main() {
     
 
     println!("05-full.txt");
-    //println!("{}", part1(&linesfull));
-    //println!("{}\n", part2(&linesfull));
+    println!("{}", part1(&linesfull));
+    println!("{}\n", part2(&linesfull));
 
     println!("05-example.txt");
     println!("{}", part1(&lines));
@@ -209,7 +209,7 @@ fn part2(lines: &Vec<String>) -> u64 {
                 let source_range_start = split[1].parse::<u64>().unwrap();
                 let range_len = split[2].parse::<u64>().unwrap();
                 //println!("{split:?}: {}..{}, {}..{}", source_range_start, source_range_start+range_len, dest_range_start, dest_range_start+range_len);
-                vec![dest_range_start, source_range_start, range_len]
+                RangeMap::new(source_range_start, dest_range_start, range_len)
             })
             .collect::<Vec<_>>();
         mappings.push(mapset);
@@ -227,12 +227,7 @@ fn part2(lines: &Vec<String>) -> u64 {
                             for mapset in &mappings {
                                 let mut found = false;
                                 let mut mapped: u64 = 0;
-                                for rangearr in mapset {
-                                    let rangemap = RangeMap::new(
-                                        rangearr[1],
-                                        rangearr[0],
-                                        rangearr[2]
-                                    );
+                                for rangemap in mapset {
                                     if rangemap.contains_from(&current_val) {
                                         mapped = rangemap.map(&current_val);
                                         found = true;
