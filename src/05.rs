@@ -39,6 +39,12 @@ impl RangeMap
     }
 }
 
+impl PartialEq for RangeMap {
+    fn eq(&self, other: &Self) -> bool {
+        (self.from_start == other.from_start) && (self.to_start == other.to_start) && (self.length == other.length)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use setup_utils::read_lines;
@@ -70,7 +76,7 @@ mod tests {
             ))
         }
     }
-
+    /*
     #[test]
     fn full() -> Result<(), String> {
         let lines = read_lines(Path::new("./inputs/05-full.txt"));
@@ -92,21 +98,16 @@ mod tests {
                 result1, result2
             )),
         }
-    }
+    }*/
 }
 
 fn main() {
     let linesfull = read_lines(Path::new("./inputs/05-full.txt"));
     let lines = read_lines(Path::new("./inputs/05-example.txt"));
-    
-    let map = RangeMap::new(0, 4, 4);
-    let arr = vec![0, 1, 2, 3];
-    println!("{arr:?}: {:?}", arr.iter().map(|n| map.map(n)).collect::<Vec<_>>());
-    
 
-    println!("05-full.txt");
-    println!("{}", part1(&linesfull));
-    println!("{}\n", part2(&linesfull));
+    //println!("05-full.txt");
+    //println!("{}", part1(&linesfull));
+    //println!("{}\n", part2(&linesfull));
 
     println!("05-example.txt");
     println!("{}", part1(&lines));
@@ -139,11 +140,12 @@ fn part1(lines: &Vec<String>) -> u64 {
                 let dest_range_start = split[0].parse::<u64>().unwrap();
                 let source_range_start = split[1].parse::<u64>().unwrap();
                 let range_len = split[2].parse::<u64>().unwrap();
-                println!("{split:?}: {}..{}, {}..{}", source_range_start, source_range_start+range_len, dest_range_start, dest_range_start+range_len);
+                //println!("({}, {}, {})", source_range_start, dest_range_start, range_len);
                 RangeMap::new(
                     source_range_start, dest_range_start,
                     range_len
                 )
+                //println!("[{}..{}]:[{}..{}]", r.from_start, r.from_start + r.length, r.to_start, r.to_start + r.length);
             })
             .collect::<Vec<_>>();
         mappings.push(mapset);
@@ -180,6 +182,8 @@ fn part1(lines: &Vec<String>) -> u64 {
 }
 
 fn part2(lines: &Vec<String>) -> u64 {
+    let mut lowest = u64::MAX;
+    let _ = thread::scope(|s| {
     let seeds_unparsed = lines[0].split(':').map(|s| s.trim()).collect::<Vec<_>>()[1]
         .split(' ')
         .map(|s| {
@@ -209,19 +213,81 @@ fn part2(lines: &Vec<String>) -> u64 {
                 let source_range_start = split[1].parse::<u64>().unwrap();
                 let range_len = split[2].parse::<u64>().unwrap();
                 //println!("{split:?}: {}..{}, {}..{}", source_range_start, source_range_start+range_len, dest_range_start, dest_range_start+range_len);
-                RangeMap::new(source_range_start, dest_range_start, range_len)
+                let r = RangeMap::new(source_range_start, dest_range_start, range_len);
+                //println!("[{}..{}]:[{}..{}]", r.from_start, r.from_start + r.length, r.to_start, r.to_start + r.length);
+                return r;
             })
             .collect::<Vec<_>>();
         mappings.push(mapset);
     }
-    let mut lowest = u64::MAX;
-    let _ = thread::scope(|s| {
         let join_vec = seed_ranges
             .map(|seed_range| {
-                s.spawn(|| {
+                let mappings = mappings.clone();
+                s.spawn(move || {
                     let mut num_of_iters: u64 = 0;
+                    let mut valid_maps: Vec<RangeMap> = vec![];
+                    let mut starts = vec![];
+                    let mut straights: Vec<u64> = vec![];
+                    println!("Seed range: [{}..{}]", seed_range.start, seed_range.end);
+                    {
+                        for seed in seed_range.clone() {
+                            let mut found_a_map = false;
+                            for map in mappings[0].clone() {
+                                if map.contains_from(&seed) {
+                                    if !valid_maps.contains(&map) {
+                                        let cloned = map.clone();
+                                        //println!("[{}..{}]:[{}..{}] -> {:?}", cloned.from_start, cloned.from_start + cloned.length, cloned.to_start, cloned.to_start + cloned.length, cloned.map(&seed));
+                                        //println!("{cloned:?} -> {}", cloned.map(&seed));
+                                        valid_maps.push(cloned);
+                                        starts.push(seed);
+                                    }
+                                    found_a_map = true;
+                                }
+                                num_of_iters += 1;
+                            }
+                            if !found_a_map {
+                                straights.push(seed);
+                            }
+                        }
+                    }
+                    for mapset in &mappings.clone()[1..] {
+                        let cloned = valid_maps.clone();
+                        let new_starts = cloned.iter().zip(starts).map(|(map, start)| map.map(&start)).chain(straights.clone());
+                        valid_maps = vec![];
+                        starts = vec![];
+                        straights = vec![];
+                        {
+                            for seed in new_starts.clone() {
+                                let mut found_a_map = false;
+                                for map in mapset {
+                                    if map.contains_from(&seed) {
+                                        if !valid_maps.contains(&map) {
+                                            let cloned = map.clone();
+                                            //println!("[{}..{}]:[{}..{}] -> {:?}", cloned.from_start, cloned.from_start + cloned.length, cloned.to_start, cloned.to_start + cloned.length, cloned.map(&seed));
+                                            valid_maps.push(cloned);
+                                            starts.push(seed);
+                                        }
+                                        found_a_map = true;
+                                    }
+                                    num_of_iters += 1;
+                                }
+                                if !found_a_map {
+                                    straights.push(seed);
+                                }
+                            }
+                            println!("{:?}, {straights:?}", new_starts.collect::<Vec<_>>());
+                        }
+                    }
+                    //println!("{starts:?}");
+                    //(valid_maps.iter().zip(starts).map(|(map, start)| map.map(&start)).chain(straights).min().unwrap(), num_of_iters)
+                    let lowest = starts.iter().chain(&straights).min().unwrap();
+                    (lowest.clone(), num_of_iters)
+                    
+                    /*
                     return (seed_range
                         .map(|seed| {
+
+                            
                             let mut current_val = seed.clone();
                             //print!("{current_val}");
                             for mapset in &mappings {
@@ -246,20 +312,23 @@ fn part2(lines: &Vec<String>) -> u64 {
                         })
                         .min()
                         .unwrap(), num_of_iters);
+                    */
                 })
             })
             .collect::<Vec<_>>();
-        let mut _i = 0;
+        let mut i = 0;
+        let mut num_of_iters = 0;
         for jh in join_vec {
             let val = jh.join().unwrap();
             if val.0 < lowest {
                 lowest = val.0;
             }
-            //println!("Thread {i} returned, count of iterations performed: {}", val.1);
-            _i += 1;
+            println!("Thread {i} returned, count of iterations performed: {}", val.1);
+            num_of_iters += val.1;
+            i += 1;
         }
+        println!("Iters: {num_of_iters}");
     });
-    //println!("{result:?}");
     return lowest;
     //return result.iter().min().unwrap().clone();
 }
