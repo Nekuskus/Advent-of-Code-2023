@@ -50,4 +50,5 @@ name = "10"
 path = "src/10.rs"
 
 [dependencies]
+debug_print = "1.0.0"
 lazy_static = "1.4.0"
