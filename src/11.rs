@@ -11,7 +11,7 @@ mod tests {
 
     #[test]
     fn part1() -> Result<(), String> {
-        let lines = read_lines(Path::new("./inputs/11-1-example.txt"));
+        let lines = read_lines(Path::new("./inputs/11-example.txt"));
         let result = crate::part1(&lines);
         if result == 374 {
             Ok(())
@@ -22,7 +22,7 @@ mod tests {
     
     #[test]
     fn part2() -> Result<(), String> {
-        let lines = read_lines(Path::new("./inputs/11-1-example.txt"));
+        let lines = read_lines(Path::new("./inputs/11-example.txt"));
         let result = crate::part2(&lines, 100);
         if result == 8410 {
             Ok(())
