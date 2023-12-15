@@ -61,6 +61,10 @@ path = "src/12.rs"
 name = "13"
 path = "src/13.rs"
 
+[[bin]]
+name = "14"
+path = "src/14.rs"
+
 [dependencies]
 debug_print = "1.0.0"
 lazy_static = "1.4.0"
