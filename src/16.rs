@@ -2,7 +2,7 @@ use setup_utils::*;
 use std::{path::Path, collections::HashSet};
 use debug_print::{debug_print as debug, debug_println as debugln};
 
-// Symbols to replace: 16 46 51 7498 SOLVE2
+// Symbols to replace: 16 46 51 7498 7846
 
 
 #[cfg(test)]
@@ -36,20 +36,14 @@ mod tests {
     fn full() -> Result<(), String> {
         let lines = read_lines(Path::new("./inputs/16-full.txt"));
         let result1 = crate::part1(&lines);
-        //let result2 = crate::part2(&lines);
-        
-        if result1 == 7498 {
-            Ok(())
-        } else {
-            Err(format!("16: Bad result for Part 1, expected 7498 got {}", result1))
-        }
-        /*
+        let result2 = crate::part2(&lines);
+
         match (result1, result2) {
-            (7498, SOLVE2) => Ok(()),
-            (_, SOLVE2) => Err(format!("16: Bad result for Part 1, expected 7498 got {}", result1)),
-            (7498, _) => Err(format!("16: Bad result for Part 2, expected SOLVE2 got {}", result2)),
-            (_, _) => Err(format!("16: Bad result for Part 1 & 2, expected (7498, SOLVE2) got ({}, {})", result1, result2))
-        }*/
+            (7498, 7846) => Ok(()),
+            (_, 7846) => Err(format!("16: Bad result for Part 1, expected 7498 got {}", result1)),
+            (7498, _) => Err(format!("16: Bad result for Part 2, expected 7846 got {}", result2)),
+            (_, _) => Err(format!("16: Bad result for Part 1 & 2, expected (7498, 7846) got ({}, {})", result1, result2))
+        }
     }
 }
 
