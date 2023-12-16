@@ -1,6 +1,6 @@
 use setup_utils::*;
 use std::{path::Path, collections::HashSet};
-use debug_print::{debug_print as debug, debug_println as debugln};
+use debug_print::debug_println as debugln;
 
 // Symbols to replace: 16 46 51 7498 7846
 
@@ -82,9 +82,9 @@ fn energize(grid: &Vec<Vec<char>>, entry: (usize, usize, Direction)) -> i32 {
             cacheset.insert(p);
         }
         //println!("{queue:?}");
-        for line in &energized {
+        //for line in &energized {
             //println!("{}", line.iter().map(|x| if *x { '#' } else { '.' }).collect::<String>())
-        }
+        //}
         //println!("----------");
         energized[p.1][p.0] = true;
         match grid[p.1][p.0] {
