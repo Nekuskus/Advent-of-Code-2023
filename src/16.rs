@@ -2,7 +2,7 @@ use setup_utils::*;
 use std::{path::Path, collections::HashSet};
 use debug_print::{debug_print as debug, debug_println as debugln};
 
-// Symbols to replace: 16 46 TEST2 SOLVE1 SOLVE2
+// Symbols to replace: 16 46 51 7498 SOLVE2
 
 
 #[cfg(test)]
@@ -20,15 +20,15 @@ mod tests {
             Err(format!("16: Bad result for Part 1 example, expected 46 got {}", result))
         }
     }
-    /*
+
     #[test]
     fn part2() -> Result<(), String> {
         let lines = read_lines(Path::new("./inputs/16-example.txt"));
         let result = crate::part2(&lines);
-        if result == TEST2 {
+        if result == 51 {
             Ok(())
         } else {
-            Err(format!("16: Bad result for Part 2 example, expected TEST2 got {}", result))
+            Err(format!("16: Bad result for Part 2 example, expected 51 got {}", result))
         }
     }
 
@@ -38,33 +38,32 @@ mod tests {
         let result1 = crate::part1(&lines);
         //let result2 = crate::part2(&lines);
         
-        if result1 == SOLVE1 {
+        if result1 == 7498 {
             Ok(())
         } else {
-            Err(format!("16: Bad result for Part 1, expected SOLVE1 got {}", result1))
+            Err(format!("16: Bad result for Part 1, expected 7498 got {}", result1))
         }
         /*
         match (result1, result2) {
-            (SOLVE1, SOLVE2) => Ok(()),
-            (_, SOLVE2) => Err(format!("16: Bad result for Part 1, expected SOLVE1 got {}", result1)),
-            (SOLVE1, _) => Err(format!("16: Bad result for Part 2, expected SOLVE2 got {}", result2)),
-            (_, _) => Err(format!("16: Bad result for Part 1 & 2, expected (SOLVE1, SOLVE2) got ({}, {})", result1, result2))
+            (7498, SOLVE2) => Ok(()),
+            (_, SOLVE2) => Err(format!("16: Bad result for Part 1, expected 7498 got {}", result1)),
+            (7498, _) => Err(format!("16: Bad result for Part 2, expected SOLVE2 got {}", result2)),
+            (_, _) => Err(format!("16: Bad result for Part 1 & 2, expected (7498, SOLVE2) got ({}, {})", result1, result2))
         }*/
     }
-    */
 }
 
 fn main() {
     let linesfull = read_lines(Path::new("./inputs/16-full.txt"));
-    let lines1 = read_lines(Path::new("./inputs/16-1-example.txt"));
+    let lines1 = read_lines(Path::new("./inputs/16-example.txt"));
 
     println!("16-full.txt");
     println!("{}", part1(&linesfull));
-    //println!("{}\n", part2(&linesfull));
+    println!("{}\n", part2(&linesfull));
     
     println!("16-1-example.txt");
     println!("{}", part1(&lines1));
-    //println!("{}\n", part2(&lines1));
+    println!("{}\n", part2(&lines1));
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -225,8 +224,12 @@ fn part1(lines: &Vec<String>) -> i32 {
 
     return energize(&grid, (0, 0, East));
 }
-/*
-fn part2(lines: &Vec<String>) -> i32 {
 
+fn part2(lines: &Vec<String>) -> i32 {
+    use Direction::*;
+    let grid: Vec<Vec<char>> = lines.iter().map(|s| s.chars().collect()).collect();
+
+    let list_of_attempts = (0..grid[0].len()).map(|n| vec![(n, 0, South), (n, grid.len() - 1, North)]).chain((0..grid.len()).map(|n| vec![(0, n, West), (grid[n].len() - 1, n, East)])).flatten();
+    debugln!("{:#?}", list_of_attempts.clone().collect::<Vec<_>>());
+    return list_of_attempts.map(|item| energize(&grid, item)).max().unwrap();
 }
-*/
