@@ -60,14 +60,6 @@ fn main() {
     println!("{}\n", part2(&lines1));
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-enum Direction {
-    North,
-    South,
-    West,
-    East,
-}
-
 fn energize(grid: &Vec<Vec<char>>, entry: (usize, usize, Direction)) -> i32 {
     use Direction::*;
     let mut energized: Vec<Vec<bool>> = grid.iter().map(|line| line.iter().map(|_| false).collect()).collect();
