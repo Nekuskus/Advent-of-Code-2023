@@ -84,6 +84,9 @@ fn part1(lines: &Vec<String>) -> i32 {
     let mut found_min: i32 = i32::MAX;
 
     while let Some((node, mut total_cost, mut cache)) = to_visit.pop() {
+        if node.3 == 3 {
+            continue;
+        }
         if cache.contains(&(node.0, node.1)) {
             continue;
         } else {
