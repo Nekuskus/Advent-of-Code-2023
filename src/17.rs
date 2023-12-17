@@ -77,8 +77,9 @@ fn main() {
 
 fn part1(lines: &Vec<String>) -> i32 {
     use Direction::*;
+    let TILES = lines.len() * lines[0].len()  * 4; // because 4 directions
     let charmap: Vec<Vec<i32>> = lines.iter().map(|s| s.chars().map(|c| c.to_string().parse::<i32>().unwrap()).collect()).collect();
-    let mut cache: HashMap<(usize, usize), i32> = HashMap::new();
+    let mut cache: HashMap<(usize, usize, Direction), i32> = HashMap::new();
     let mut to_visit: Vec<((usize, usize, Direction, u8), i32)> = vec![((1, 0, East, 1), 0), ((0, 1, South, 1), 0)];
     //let mut found_costs: Vec<i32> = vec![];
     let mut found_min: i32 = i32::MAX;
@@ -93,17 +94,20 @@ fn part1(lines: &Vec<String>) -> i32 {
            continue; // worse than best currently found
         }
         //history.push((node.0, node.1));
-        if cache.contains_key(&(node.0, node.1)) {
-            if cache.get(&(node.0, node.1)).unwrap() < &total_cost { 
+        if cache.contains_key(&(node.0, node.1, node.2)) {
+            let val_mut = cache.get_mut(&(node.0, node.1, node.2)).unwrap();
+            if total_cost > *val_mut {
                 continue;
+            } else {
+                *val_mut = total_cost;
             }
         } else {
-            cache.insert((node.0, node.1), total_cost);
+            cache.insert((node.0, node.1, node.2), total_cost);
         }
         if (node.0, node.1) == (charmap[node.1].len() - 1, charmap.len() - 1) {
             if total_cost < found_min {
                 found_min = total_cost; // Found exit
-                println!("{node:?}, {total_cost}, len: {}", to_visit.len());
+                println!("{node:?}, {total_cost}, len: {}/{TILES}", cache.len());
             } 
             continue;
         }
