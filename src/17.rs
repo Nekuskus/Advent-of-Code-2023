@@ -1,5 +1,5 @@
 use setup_utils::*;
-use std::{path::Path, collections::HashSet};
+use std::{path::Path, collections::HashMap};
 use debug_print::{debug_print as debug, debug_println as debugln};
 
 // Symbols to replace: 17 102 TEST2 SOLVE1 SOLVE2
@@ -78,19 +78,14 @@ fn main() {
 fn part1(lines: &Vec<String>) -> i32 {
     use Direction::*;
     let charmap: Vec<Vec<i32>> = lines.iter().map(|s| s.chars().map(|c| c.to_string().parse::<i32>().unwrap()).collect()).collect();
-    
-    let mut to_visit: Vec<((usize, usize, Direction, u8), i32, HashSet<(usize, usize)>)> = vec![((1, 0, East, 1), 0, HashSet::new()), ((0, 1, South, 1), 0, HashSet::new())];
+    let mut cache: HashMap<(usize, usize), i32> = HashMap::new();
+    let mut to_visit: Vec<((usize, usize, Direction, u8), i32)> = vec![((1, 0, East, 1), 0), ((0, 1, South, 1), 0)];
     //let mut found_costs: Vec<i32> = vec![];
     let mut found_min: i32 = i32::MAX;
 
-    while let Some((node, mut total_cost, mut cache)) = to_visit.pop() {
+    while let Some((node, mut total_cost)) = to_visit.pop() {
         if node.3 == 3 {
             continue;
-        }
-        if cache.contains(&(node.0, node.1)) {
-            continue;
-        } else {
-            cache.insert((node.0, node.1));
         }
         total_cost += charmap[node.1 as usize][node.0 as usize];
         //println!("{}", charmap[node.1 as usize][node.0 as usize]);
@@ -98,7 +93,13 @@ fn part1(lines: &Vec<String>) -> i32 {
            continue; // worse than best currently found
         }
         //history.push((node.0, node.1));
-
+        if cache.contains_key(&(node.0, node.1)) {
+            if cache.get(&(node.0, node.1)).unwrap() < &total_cost { 
+                continue;
+            }
+        } else {
+            cache.insert((node.0, node.1), total_cost);
+        }
         if (node.0, node.1) == (charmap[node.1].len() - 1, charmap.len() - 1) {
             if total_cost < found_min {
                 found_min = total_cost; // Found exit
@@ -110,46 +111,46 @@ fn part1(lines: &Vec<String>) -> i32 {
         match node.2 {
             North => {
                 if node.3 < 3 && node.1 > 0 {
-                    to_visit.push(((node.0, node.1 - 1, North, node.3 + 1), total_cost, cache.clone()));
+                    to_visit.push(((node.0, node.1 - 1, North, node.3 + 1), total_cost));
                 }
                 if node.0 > 0 {
-                    to_visit.push(((node.0 - 1, node.1, West, 0), total_cost, cache.clone()));
+                    to_visit.push(((node.0 - 1, node.1, West, 0), total_cost));
                 }
                 if node.0 < charmap[0].len() - 1 {
-                    to_visit.push(((node.0 + 1, node.1, East, 0), total_cost, cache));
+                    to_visit.push(((node.0 + 1, node.1, East, 0), total_cost));
                 }
             },
             South => {
                 if node.0 > 0 {
-                    to_visit.push(((node.0 - 1, node.1, West, 0), total_cost, cache.clone()));
+                    to_visit.push(((node.0 - 1, node.1, West, 0), total_cost));
                 }
                 if node.0 < charmap[0].len() - 1 {
-                    to_visit.push(((node.0 + 1, node.1, East, 0), total_cost, cache.clone()));
+                    to_visit.push(((node.0 + 1, node.1, East, 0), total_cost));
                 }
                 if node.3 < 3 && node.1 < charmap.len() - 1 {
-                    to_visit.push(((node.0, node.1 + 1, South, node.3 + 1), total_cost, cache));
+                    to_visit.push(((node.0, node.1 + 1, South, node.3 + 1), total_cost));
                 }
             },
             West => {
                 if node.1 > 0 {
-                    to_visit.push(((node.0, node.1 - 1, North, 0), total_cost, cache.clone()));
+                    to_visit.push(((node.0, node.1 - 1, North, 0), total_cost));
                 }
                 if node.3 < 3 && node.0 > 0 {
-                    to_visit.push(((node.0 - 1, node.1, West, node.3 + 1), total_cost, cache.clone()));
+                    to_visit.push(((node.0 - 1, node.1, West, node.3 + 1), total_cost));
                 }
                 if node.1 < charmap.len() - 1 {
-                    to_visit.push(((node.0, node.1 + 1, South, 0), total_cost, cache));
+                    to_visit.push(((node.0, node.1 + 1, South, 0), total_cost));
                 }
             }
             East => {
                 if node.1 > 0 {
-                    to_visit.push(((node.0, node.1 - 1, North, 0), total_cost, cache.clone()));
+                    to_visit.push(((node.0, node.1 - 1, North, 0), total_cost));
                 }
                 if node.3 < 3 && node.0 < charmap[0].len() - 1 {
-                    to_visit.push(((node.0 + 1, node.1, East, node.3 + 1), total_cost, cache.clone()));
+                    to_visit.push(((node.0 + 1, node.1, East, node.3 + 1), total_cost));
                 }
                 if node.1 < charmap.len() - 1 {
-                    to_visit.push(((node.0, node.1 + 1, South, 0), total_cost, cache));
+                    to_visit.push(((node.0, node.1 + 1, South, 0), total_cost));
                 }
             }
         }
