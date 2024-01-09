@@ -74,94 +74,102 @@ fn main() {
     
 }
 
+fn neighbours(grid: &Vec<Vec<i32>>, x: usize, y: usize, dir: Direction, counter: u8) -> Vec<((usize, usize, Direction, u8), i32)>{
+    use Direction::*;
+    let mut ret = Vec::new();
+    if y > 0 && dir != South {
+        if dir == North {
+            if counter != 3 {
+                ret.push(((x, y - 1, North, counter + 1), grid[y - 1][x]));
+            } // else push with cost = i32::MAX, unnecessary
+        } else {
+            ret.push(((x, y - 1, North, 1), grid[y - 1][x]));
+        }
+    }
+    if y < grid.len() - 1 && dir != North {
+        if dir == South {
+            if counter != 3 {
+                ret.push(((x, y + 1, South, counter + 1), grid[y + 1][x]));
+            }
+        } else {
+            ret.push(((x, y + 1, South, 1), grid[y + 1][x]));
+        }
+    }
+    if x > 0 && dir != East {
+        if dir == West {
+            if counter != 3 {
+                ret.push(((x - 1, y, West, counter + 1), grid[y][x - 1]));
+            }
+        } else {
+            ret.push(((x - 1, y, West, 1), grid[y][x - 1]));
+        }
+    }
+    if x < grid[y].len() - 1 && dir != West {
+        if dir == East {
+            if counter != 3 {
+                ret.push(((x + 1, y, East, counter + 1), grid[y][x + 1]));
+            }
+        } else {
+            ret.push(((x + 1, y, East, 1), grid[y][x + 1]));
+        }
+    }
+    ret
+}
 
 fn part1(lines: &Vec<String>) -> i32 {
     use Direction::*;
-    let TILES = lines.len() * lines[0].len()  * 4; // because 4 directions
+    let tiles = lines.len() * lines[0].len()  * 4; // because 4 directions
     let charmap: Vec<Vec<i32>> = lines.iter().map(|s| s.chars().map(|c| c.to_string().parse::<i32>().unwrap()).collect()).collect();
-    let mut cache: HashMap<(usize, usize, Direction), i32> = HashMap::new();
-    let mut to_visit: Vec<((usize, usize, Direction, u8), i32)> = vec![((1, 0, East, 1), 0), ((0, 1, South, 1), 0)];
-    //let mut found_costs: Vec<i32> = vec![];
-    let mut found_min: i32 = i32::MAX;
+    let mut came_from: HashMap<(usize, usize, Direction, u8), (usize, usize, Direction, u8)> = HashMap::new();
+    let mut cost_so_far: HashMap<(usize, usize, Direction, u8), i32> = HashMap::new();
+    cost_so_far.insert((0, 0, North, 0), 0);
 
-    while let Some((node, mut total_cost)) = to_visit.pop() {
-        if node.3 == 3 {
-            continue;
+    let mut frontier: PriorityQueue<(usize, usize, Direction, u8)> = PriorityQueue::from(vec![((0, 0, North, 0), 0)]);
+    let goal = (charmap[charmap.len() - 1].len() - 1, charmap.len() - 1);
+
+    //println!("{:?}", neighbours(&charmap, 0, 0, North, 0));
+    let mut found_cost: i32 = -1;
+    let mut last = (0, 0, North, 0);
+    // Priority within queue is treated as current cost
+
+    while let Some(((x, y, dir, counter), cost)) = frontier.dequeue_with_cost() {
+        if (x, y) == goal {
+            found_cost = cost;
+            last = (x, y, dir, counter);
+            break;
         }
-        total_cost += charmap[node.1 as usize][node.0 as usize];
-        //println!("{}", charmap[node.1 as usize][node.0 as usize]);
-        if total_cost > found_min {
-           continue; // worse than best currently found
-        }
-        //history.push((node.0, node.1));
-        if cache.contains_key(&(node.0, node.1, node.2)) {
-            let val_mut = cache.get_mut(&(node.0, node.1, node.2)).unwrap();
-            if total_cost > *val_mut {
-                continue;
-            } else {
-                *val_mut = total_cost;
-            }
-        } else {
-            cache.insert((node.0, node.1, node.2), total_cost);
-        }
-        if (node.0, node.1) == (charmap[node.1].len() - 1, charmap.len() - 1) {
-            if total_cost < found_min {
-                found_min = total_cost; // Found exit
-                println!("{node:?}, {total_cost}, len: {}/{TILES}", cache.len());
-            } 
-            continue;
-        }
-        //println!("{node:?} {total_cost}");
-        match node.2 {
-            North => {
-                if node.3 < 3 && node.1 > 0 {
-                    to_visit.push(((node.0, node.1 - 1, North, node.3 + 1), total_cost));
-                }
-                if node.0 > 0 {
-                    to_visit.push(((node.0 - 1, node.1, West, 0), total_cost));
-                }
-                if node.0 < charmap[0].len() - 1 {
-                    to_visit.push(((node.0 + 1, node.1, East, 0), total_cost));
-                }
-            },
-            South => {
-                if node.0 > 0 {
-                    to_visit.push(((node.0 - 1, node.1, West, 0), total_cost));
-                }
-                if node.0 < charmap[0].len() - 1 {
-                    to_visit.push(((node.0 + 1, node.1, East, 0), total_cost));
-                }
-                if node.3 < 3 && node.1 < charmap.len() - 1 {
-                    to_visit.push(((node.0, node.1 + 1, South, node.3 + 1), total_cost));
-                }
-            },
-            West => {
-                if node.1 > 0 {
-                    to_visit.push(((node.0, node.1 - 1, North, 0), total_cost));
-                }
-                if node.3 < 3 && node.0 > 0 {
-                    to_visit.push(((node.0 - 1, node.1, West, node.3 + 1), total_cost));
-                }
-                if node.1 < charmap.len() - 1 {
-                    to_visit.push(((node.0, node.1 + 1, South, 0), total_cost));
-                }
-            }
-            East => {
-                if node.1 > 0 {
-                    to_visit.push(((node.0, node.1 - 1, North, 0), total_cost));
-                }
-                if node.3 < 3 && node.0 < charmap[0].len() - 1 {
-                    to_visit.push(((node.0 + 1, node.1, East, node.3 + 1), total_cost));
-                }
-                if node.1 < charmap.len() - 1 {
-                    to_visit.push(((node.0, node.1 + 1, South, 0), total_cost));
-                }
+
+        for ((nx, ny, ndir, ncounter), ncost) in neighbours(&charmap, x, y, dir, counter) {
+            let cur_cost = cost_so_far.get(&(x, y, dir, counter)).unwrap();
+            let new_cost = cur_cost + ncost;
+            
+            if !cost_so_far.contains_key(&(nx, ny, ndir, ncounter)) || new_cost < *cost_so_far.get(&(nx, ny, ndir, ncounter)).unwrap() {
+                cost_so_far.insert((nx, ny, ndir, ncounter), new_cost);
+                frontier.enqueue((nx, ny, ndir, ncounter), new_cost);
+                came_from.insert((nx, ny, ndir, ncounter), (x, y, dir, counter));
             }
         }
     }
-    //println!("{found_costs:?}");
-    println!("{to_visit:?}");
-    return found_min;
+    let mut printable = charmap.clone();
+
+    let mut cur = last;
+    loop {
+        printable[cur.1][cur.0] = -1;
+        cur = match came_from.get(&cur) {
+            Some(node) => *node,
+            None => { break; }
+        };
+        debug!("{cur:?}")
+    }
+
+    for line in printable {
+        for c in line {
+            debug!("{}", if c != -1 { c.to_string() } else { "#".to_string() })
+        }
+        debugln!()
+    }
+
+    return found_cost;
 }
 /*
 fn part2(lines: &Vec<String>) -> i32 {
