@@ -102,14 +102,14 @@ impl<T> Iterator for PriorityQueue<T> {
     }
 }
 
-#[derive(Debug, Clone, Copy, Hash)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Point {
-    pub x: i32,
-    pub y: i32
+    pub x: usize,
+    pub y: usize
 }
 
 impl Point {
-    pub fn new(x: i32, y: i32) -> Self {
+    pub fn new(x: usize, y: usize) -> Self {
         Point { x: x, y: y }
     }
 }
