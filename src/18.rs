@@ -13,7 +13,7 @@ mod tests {
 
     #[test]
     fn part1() -> Result<(), String> {
-        let lines = read_lines(Path::new("./inputs/18-1-example.txt"));
+        let lines = read_lines(Path::new("./inputs/18-example.txt"));
         let result = crate::part1(&lines);
         if result == 62 {
             Ok(())
@@ -24,7 +24,7 @@ mod tests {
     
     #[test]
     fn part2() -> Result<(), String> {
-        let lines = read_lines(Path::new("./inputs/18-2-example.txt"));
+        let lines = read_lines(Path::new("./inputs/18-example.txt"));
         let result = crate::part2(&lines);
         if result == 952408144115 {
             Ok(())
@@ -56,7 +56,7 @@ mod tests {
 
 fn main() {
     let linesfull = read_lines(Path::new("./inputs/18-full.txt"));
-    let lines1 = read_lines(Path::new("./inputs/18-1-example.txt"));
+    let lines1 = read_lines(Path::new("./inputs/18-example.txt"));
 
     //println!("18-full.txt");
     //println!("{}", part1(&linesfull));
@@ -208,8 +208,8 @@ fn part2(lines: &Vec<String>) -> i64 {
             _ => unreachable!()
         };
         let count = i64::from_str_radix(&color[1..color.len()-1], 16).unwrap();
-        println!("{color}");
-        match strs[0] {
+        println!("{dir} {count}");
+        match dir {
             "U" => {
                 for i in 0..count {
                     if cur.y == 0 {
