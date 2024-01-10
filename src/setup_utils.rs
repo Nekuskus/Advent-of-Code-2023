@@ -101,3 +101,14 @@ impl<T> Iterator for PriorityQueue<T> {
         self.dequeue()
     }
 }
+
+pub struct Point {
+    pub x: i32,
+    pub y: i32
+}
+
+impl Point {
+    pub fn new(x: i32, y: i32) -> Self {
+        Point { x: x, y: y }
+    }
+}
