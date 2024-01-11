@@ -208,9 +208,6 @@ fn part2(lines: &Vec<String>) -> i64 {
             _ => unreachable!()
         };
         let count = i64::from_str_radix(&color[1..color.len()-1], 16).unwrap();
-        let size = grid[0].len() * grid.len();
-        let gib: f64 = 1024f64 * 1024f64 * 1024f64;
-        println!("grid size: {}x{} ({:.2} GiB)", grid[0].len(), grid.len(), size as f64 / gib);
         println!("{dir} {count}");
         match dir {
             "U" => {
